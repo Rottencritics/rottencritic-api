@@ -8,13 +8,22 @@
 		"type": "git"
 	},
 	"scripts": {
-		"start": "node ."
+		"prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+		"build": "tsc",
+		"prestart": "yarn build",
+		"start": "node dist/app.js"
 	},
 	"contributors": [
 		"Emil Nilsson <emil.nilsson@prontomail.com>"
 	],
 	"license": "MIT",
 	"dependencies": {
-		"express": "^4.17.1"
+		"express": "^4.17.1",
+		"typescript": "^3.7.2"
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.2",
+		"@types/node": "^12.12.8",
+		"tslint": "^5.20.1"
 	}
 }
