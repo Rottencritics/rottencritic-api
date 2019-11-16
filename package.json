@@ -2,13 +2,19 @@
 	"name": "rottencritic-api",
 	"version": "0.1.0",
 	"description": "API server for rottencritic.",
-	"main": "app.ts",
+	"main": "src/app.ts",
 	"repository": {
 		"url": "",
 		"type": "git"
 	},
+	"scripts": {
+		"start": "node ."
+	},
 	"contributors": [
 		"Emil Nilsson <emil.nilsson@prontomail.com>"
 	],
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.17.1"
+	}
 }
