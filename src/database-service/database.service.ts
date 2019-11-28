@@ -60,3 +60,20 @@ export async function createFilm(
     imdbId
   }
 }
+
+/**
+ * Find reviewer by name.
+ * @param name to find reviewer by.
+ */
+export const getReviewersByName = async (name: string): Promise<User> => {
+  return pool.query(
+    'SELECT * FROM reviewers WHERE name=$1::text',
+    [name],
+  ).then((res) => {
+    return {
+      id: res.rows[0].id,
+      password: res.rows[0].password,
+      username: res.rows[0].name,
+    }
+  })
+}
