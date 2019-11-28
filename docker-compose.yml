@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+  express:
+    build: .
+    ports:
+      - "80:8080"
+    volumes:
+      - .:/app
+    links:
+      - postgres
+
+  postgres:
+    image: postgres:10.4
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASS
+      POSTGRES_DB: $POSTGRES_DB
+    volumes:
+        # Set a volume to avoid data to be lost when the container is shut down.
+        # `/var/lib/postgresql/data` is the default data directory. See PGDATA.
+      - ./postgres-data:/var/lib/postgresql/data
+
+        # Scripts found in `/docker-entrypoint-initdb.d/` will be executed once
+        # the postgres data volume is empty.
+      - ./src/sql/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql
+      - ./src/sql/data.sql:/docker-entrypoint-initdb.d/002-data.sql
