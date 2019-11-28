@@ -9,11 +9,23 @@ dotenv.config()
 const app = express()
 const port = 8080
 
+import {
+  authenticationMiddleware,
+  default as authRouter,
+  tokenMiddleware,
+} from './authentication-service'
 import filmsRouter from './film-service'
+
+/**
+ * Mount pre-path middleware.
+ */
+app.use(tokenMiddleware)
+app.use(authenticationMiddleware)
 
 /**
  * Mount routers from services.
  */
+app.use('/api/auth', authRouter)
 app.use('/api/films', filmsRouter)
 
 /**
@@ -23,7 +35,8 @@ app.use('/api/films', filmsRouter)
  * further swagger documentation in the form of jsdocs.
  */
 const swaggerSpec = jsdoc({
-  apis: ['**/*.ts'],
+  apis: ['src/**/*.ts'],
+  basePath: '/api',
   definition: {
     info: {
       title: 'rottencritic API',

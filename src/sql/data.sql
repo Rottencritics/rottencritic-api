@@ -1,2 +1,2 @@
-INSERT INTO reviewers (name) VALUES ('blixn');
-INSERT INTO reviewers (name) VALUES ('godnoken');
+INSERT INTO reviewers (name,password) VALUES ('blixn','peking');
+INSERT INTO reviewers (name,password) VALUES ('godnoken','gotland');
