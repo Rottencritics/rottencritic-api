@@ -49,7 +49,7 @@ const swaggerSpec = jsdoc({
 /**
  * Serve API documentation generated from our swagger spec under `/api`.
  */
-app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // Launch server.
 app.listen(port, () => {

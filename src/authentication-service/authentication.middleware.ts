@@ -4,7 +4,7 @@ import jwt from 'express-jwt'
 /**
  * URIs that will not require the user to be authenticated by token.
  */
-const PUBLIC_URIS = ['/api/auth/token']
+const PUBLIC_URIS = ['/api/doc', '/api/auth/token']
 
 /**
  * Middleware that verifies that a user has a valid token.
