@@ -23,7 +23,7 @@ app.use('/api/films', filmsRouter)
  * further swagger documentation in the form of jsdocs.
  */
 const swaggerSpec = jsdoc({
-  apis: ['**/*.ts'],
+  apis: ['src/**/*.ts'],
   definition: {
     info: {
       title: 'rottencritic API',
