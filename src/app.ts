@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import express from 'express'
 import jsdoc from 'swagger-jsdoc'
@@ -21,6 +22,7 @@ import filmsRouter from './film-service'
  */
 app.use(tokenMiddleware)
 app.use(authenticationMiddleware)
+app.use(bodyParser.json())
 
 /**
  * Mount routers from services.

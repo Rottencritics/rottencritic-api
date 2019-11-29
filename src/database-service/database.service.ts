@@ -1,16 +1,16 @@
 import { pool } from './database.config'
 
 /**
- * Save rating of given film.
+ * Save review of given film.
  *
  * This will update existing review if it exists. If it does not exist a new
  * review will be created.
  *
- * @param filmId ID of film to rate.
+ * @param filmId ID of film to review.
  * @param userId ID of reviewer.
  * @param rating the value given to film by reviewer.
  */
-export async function rateFilm(
+export async function saveReview(
   filmId: number,
   userId: number,
   rating: number,
