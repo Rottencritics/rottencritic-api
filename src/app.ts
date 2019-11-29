@@ -53,6 +53,14 @@ const swaggerSpec = jsdoc({
  */
 app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
+// Route did not match anything, send 404.
+app.use((_, res) => {
+  res.json({
+    errorMessage: 'Requested resource does not exist.',
+    status: 404,
+  })
+})
+
 // Launch server.
 app.listen(port, () => {
   console.log(`Server started at: http://localhost:${port}`)
