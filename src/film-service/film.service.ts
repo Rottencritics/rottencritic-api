@@ -1,6 +1,7 @@
-import { createFilm, getFilm, rateFilm } from '../database-service'
+import { createFilm, getFilm, saveReview } from '../database-service'
 
-export async function likeFilm(imdbId: string, userId: number) {
+// TODO: replace rating param with complete review
+export async function reviewFilm(imdbId: string, rating: number, userId: number) {
   const film = await getFilm(imdbId)
     // Movie does not exist
     .catch((reason) => {
@@ -9,5 +10,9 @@ export async function likeFilm(imdbId: string, userId: number) {
       return createFilm(imdbId)
     })
 
-  return rateFilm(film.id, userId, 1)
+  if (![1, 0, -1].includes(rating)) {
+    return Promise.reject(`Invalid rating value: ${rating}`)
+  }
+
+  return saveReview(film.id, userId, rating)
 }
