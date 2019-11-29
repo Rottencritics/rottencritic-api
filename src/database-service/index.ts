@@ -1,1 +1,2 @@
-export * from './database.service'
+export { DatabasePool } from './database-pool'
+export { DatabaseService } from './database.service'

@@ -1,18 +1,57 @@
-import { createFilm, getFilm, saveReview } from '../database-service'
+import { DatabaseService } from '../database-service'
+import { OMDbService } from '../omdb-service'
+import { Film, Review } from '../types'
 
-// TODO: replace rating param with complete review
-export async function reviewFilm(imdbId: string, rating: number, userId: number) {
-  const film = await getFilm(imdbId)
-    // Movie does not exist
-    .catch((reason) => {
-      console.debug(reason)
-      // TODO: First verify that this exists in OMDB API.
-      return createFilm(imdbId)
-    })
+export class FilmService {
 
-  if (![1, 0, -1].includes(rating)) {
-    return Promise.reject(`Invalid rating value: ${rating}`)
+  constructor(
+    private databaseService: DatabaseService,
+    private omdbService: OMDbService) { }
+
+  public reviewFilm = async (
+    imdbId: string,
+    rating: number, // TODO: replace rating param with complete review
+    userId: number
+  ): Promise<Review> => {
+    console.debug('FilmService.reviewFilm()')
+
+    let film: Film
+    try {
+      film = await this.databaseService.getFilm(imdbId)
+    } catch (_) {
+      /**
+       * The film does not already exist in our database, so we have to make sure
+       * that the IMDb ID is valid by querying OMDb for it. If it exists, we
+       * create a new database entry for the film.
+       */
+      await this.omdbService.fetchFilm(imdbId) // Will throw error if invalid.
+      film = await this.databaseService.createFilm(imdbId)
+    }
+
+    return await this.rateFilm(film, rating, userId)
   }
 
-  return saveReview(film.id, userId, rating)
+  public getReviews = async (imdbId: string): Promise<Review[]> => {
+    console.debug('FilmService.getReviews')
+
+    // first we make sure the film actually exist
+    return this.omdbService.fetchFilm(imdbId)
+      .then((_) => {
+        return this.databaseService.loadReviews(imdbId)
+      })
+  }
+
+  public rateFilm = (
+    film: Film,
+    rating: number,
+    userId: number
+  ): Promise<Review> => {
+    console.debug('FilmService.rateFilm()')
+
+    if (![1, 0, -1].includes(rating)) {
+      return Promise.reject(`Invalid rating value: ${rating}`)
+    }
+
+    return this.databaseService.saveReview(film.id, userId, rating)
+  }
 }

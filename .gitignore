@@ -3,4 +3,5 @@ dist/
 
 # local environment variables
 .env
-postgres-data/
+
+.nyc_output/

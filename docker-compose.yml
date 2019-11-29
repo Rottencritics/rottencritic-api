@@ -22,7 +22,7 @@ services:
     volumes:
         # Set a volume to avoid data to be lost when the container is shut down.
         # `/var/lib/postgresql/data` is the default data directory. See PGDATA.
-      - ./postgres-data:/var/lib/postgresql/data
+      - /var/opt/postgres-data:/var/lib/postgresql/data
 
         # Scripts found in `/docker-entrypoint-initdb.d/` will be executed once
         # the postgres data volume is empty.
