@@ -1,0 +1,3 @@
+interface OMDbFilm {
+  imdbId: string,
+}
