@@ -14,15 +14,23 @@ export async function saveReview(
   filmId: number,
   userId: number,
   rating: number,
-): Promise<string> {
+): Promise<Review> {
+  console.debug('database.service.saveReview()')
+
   const res = await pool.query(
     `INSERT INTO reviews (reviewer,film,rating) VALUES ($1,$2,$3)
      ON CONFLICT (reviewer,film) DO UPDATE
-      SET rating = EXCLUDED.rating;`,
+      SET rating = EXCLUDED.rating;
+     SELECT reviewer,film,rating FROM reviews
+      WHERE reviewer=$1 AND film=$2;`,
     [userId, filmId, rating]
   )
 
-  return res.rows[0]
+  return {
+    film: res.rows[0].film,
+    rating: res.rows[0].rating,
+    reviewer: res.rows[0].reviewer,
+  }
 }
 
 /**
@@ -32,10 +40,16 @@ export async function saveReview(
 export async function getFilm(
   imdbId: string,
 ): Promise<Film> {
+  console.debug('database.service.getFilm()')
+
   const res = await pool.query(
     'SELECT id FROM films WHERE imdbId=$1::text;',
     [imdbId],
   )
+
+  if (res.rows.length === 0) {
+    return Promise.reject(`No film in database with imdbId=${imdbId}`)
+  }
 
   return {
     id: res.rows[0].id,
@@ -50,6 +64,7 @@ export async function getFilm(
 export async function createFilm(
   imdbId: string
 ): Promise<Film> {
+  console.debug('database.service.createFilm()')
   const res = await pool.query(
     'INSERT INTO films (imdbId) VALUES ($1::text) RETURNING id;',
     [imdbId],
