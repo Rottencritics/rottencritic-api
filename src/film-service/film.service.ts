@@ -1,4 +1,9 @@
-import { createFilm, getFilm, saveReview } from '../database-service'
+import {
+  createFilm,
+  getFilm,
+  loadReviews,
+  saveReview
+} from '../database-service'
 
 // TODO: replace rating param with complete review
 export async function reviewFilm(imdbId: string, rating: number, userId: number) {
@@ -15,4 +20,8 @@ export async function reviewFilm(imdbId: string, rating: number, userId: number)
   }
 
   return saveReview(film.id, userId, rating)
+}
+
+export const getReviews = async (imdbId: string): Promise<Review[]> => {
+  return loadReviews(imdbId)
 }

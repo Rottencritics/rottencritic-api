@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { reviewFilm } from './film.service'
+import { getReviews, reviewFilm } from './film.service'
 
 const router = express.Router()
 
@@ -52,6 +52,52 @@ router.post('/:id/reviews', (req, res) => {
 
   reviewFilm(req.params.id, req.body.review.rating, 1) // id 1 => reviewer blixn
     .then((_) => res.json({
+      status: 200,
+    }))
+    .catch((reason) => res.json({
+      errorMessage: reason,
+      status: 400,
+    }))
+})
+
+/**
+ * @swagger
+ *  /films/{id}/reviews:
+ *    get:
+ *      description: Get list of all reviews belonging to a film.
+ *      produces:
+ *        - application/json
+ *      responses:
+ *        200:
+ *          description: Successfully retrieves reviews.
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: integer
+ *              reviews:
+ *                type: object
+ *                properties:
+ *                  film:
+ *                    type: string
+ *                  reviewer:
+ *                    type: integer
+ *                  rating:
+ *                    type: integer
+ *        400:
+ *          description: Error occured while trying to retrieve reviews.
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: integer
+ *              errorMessage:
+ *                type: string
+ */
+router.get('/:id/reviews', (req, res) => {
+  getReviews(req.params.id)
+    .then((reviews) => res.json({
+      reviews,
       status: 200,
     }))
     .catch((reason) => res.json({

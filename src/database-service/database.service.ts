@@ -67,7 +67,7 @@ export async function createFilm(
  */
 export const getReviewersByName = async (name: string): Promise<User> => {
   return pool.query(
-    'SELECT * FROM reviewers WHERE name=$1::text',
+    'SELECT * FROM reviewers WHERE name=$1::text;',
     [name],
   ).then((res) => {
     return {
@@ -75,5 +75,30 @@ export const getReviewersByName = async (name: string): Promise<User> => {
       password: res.rows[0].password,
       username: res.rows[0].name,
     }
+  })
+}
+
+/**
+ * Get all, full, reviews of a given film.
+ * @param imdbId film to get reviews for.
+ */
+export const loadReviews = async (imdbId: string): Promise<Review[]> => {
+  return pool.query(
+    `SELECT * FROM reviews WHERE
+      film=(SELECT id FROM films WHERE imdbId=$1::text);`,
+    [imdbId]
+  ).then((res) => {
+    const reviews: Review[] = []
+
+    res.rows.forEach((review) => {
+      reviews.push({
+        film: imdbId,
+        rating: review.rating,
+        reviewer: review.reviewer,
+      })
+
+    })
+
+    return reviews
   })
 }
