@@ -7,6 +7,9 @@
   "rules": {
     "interface-name": [true, "never-prefix"],
     "no-console": false,
+    "no-shadowed-variable": [ true, {
+      "underscore": false
+    }],
     "semicolon": [ true, "never" ],
     "trailing-comma": false,
     "quotemark": [ true, "single" ]
