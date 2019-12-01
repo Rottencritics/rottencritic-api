@@ -1,4 +1,4 @@
-import { Pool, Submittable } from 'pg'
+import { Pool } from 'pg'
 
 export class DatabasePool {
 
