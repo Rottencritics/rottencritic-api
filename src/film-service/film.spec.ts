@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai'
 import sinon, { SinonSandbox } from 'sinon'
-import { DatabasePool, DatabaseService } from '../database-service'
+import { DatabaseService } from '../database-service'
 import { OMDbService } from '../omdb-service'
 import { Review } from '../types'
 import { FilmService } from './film.service'
@@ -9,8 +9,7 @@ const LE_MANS = 'tt1950186'
 const BAD_IMDB_ID = 'tt196'
 
 const omdbService = new OMDbService()
-const databasePool = new DatabasePool()
-const databaseService = new DatabaseService(databasePool)
+const databaseService = new DatabaseService()
 
 let sandbox: SinonSandbox
 

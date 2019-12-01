@@ -16,17 +16,14 @@ import {
   AuthenticationService,
   tokenMiddleware,
 } from './authentication-service'
-import { DatabasePool, DatabaseService } from './database-service'
+import { DatabaseService } from './database-service'
 import { FilmRouter, FilmService } from './film-service'
 import { OMDbService } from './omdb-service'
 
-const databasePool = new DatabasePool()
-const databaseService = new DatabaseService(databasePool)
+const databaseService = new DatabaseService()
 const omdbService = new OMDbService()
 const authenticationService = new AuthenticationService(databaseService)
 const filmService = new FilmService(databaseService, omdbService)
-
-databasePool.connect()
 
 /**
  * Mount pre-path middleware.

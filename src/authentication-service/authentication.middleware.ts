@@ -4,7 +4,10 @@ import jwt from 'express-jwt'
 /**
  * URIs that will not require the user to be authenticated by token.
  */
-const PUBLIC_URIS = ['/api/doc', '/api/auth/token']
+const PUBLIC_URIS = [
+  { url: /^\/api\/doc\/.*/, methods: ['GET'] },
+  { url: '/api/auth/token', methods: ['POST'] },
+]
 
 /**
  * Middleware that verifies that a user has a valid token.
@@ -33,6 +36,8 @@ export const authenticationMiddleware = (
   res: express.Response,
   next: express.NextFunction
 ) => {
+  console.debug('authenticationMiddleware()')
+  console.debug(err)
   if (err.name === 'UnauthorizedError') {
     res.json({
       message: err.message + '.', // someone was sloppy with punctuation

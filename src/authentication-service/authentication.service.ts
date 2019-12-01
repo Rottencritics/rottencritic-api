@@ -30,9 +30,14 @@ export class AuthenticationService {
     password: string,
     authorize: (error: Error | null, s: boolean) => void,
   ) => {
+    console.debug('AuthenticationService.validateCredentials()')
+
     return this.databaseService.getReviewersByName(username).then((user) => {
+      console.debug('recieved user')
+      console.debug(user)
       return authorize(null, user.password === password)
     }).catch((_) => {
+      console.debug(_)
       return authorize(null, false)
     })
   }
@@ -44,6 +49,8 @@ export class AuthenticationService {
   public extractUsernameFromAuthorizationHeader = (
     req: express.Request
   ) => {
+    console.debug('AuthenticationService.extractUsernameFromAuthorzationHeader()')
+
     return new Buffer(req.headers.authorization.split(' ').pop(), 'base64')
       .toString('ascii')
       .split(':')[0]

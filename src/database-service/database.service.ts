@@ -1,9 +1,13 @@
+import { Pool } from 'pg'
 import { Film, Review, User } from '../types'
-import { DatabasePool } from './database-pool'
+import { CONFIG } from './database.config'
 
 export class DatabaseService {
 
-  constructor(private db: DatabasePool) { }
+  public pool: Pool
+  constructor() {
+    this.pool = new Pool(CONFIG)
+  }
 
   /**
    * Save review of given film.
@@ -22,7 +26,7 @@ export class DatabaseService {
   ): Promise<Review> => {
     console.debug('database.service.saveReview()')
 
-    const res = await this.db.query(
+    const res = await this.pool.query(
       `INSERT INTO reviews (reviewer,film,rating) VALUES ($1,$2,$3)
          ON CONFLICT (reviewer,film) DO UPDATE
            SET rating = EXCLUDED.rating;
@@ -45,7 +49,7 @@ export class DatabaseService {
   public getFilm = async (imdbId: string): Promise<Film> => {
     console.debug('database.service.getFilm()')
 
-    const res = await this.db.query(
+    const res = await this.pool.query(
       'SELECT id FROM films WHERE imdbId=$1::text;',
       [imdbId],
     )
@@ -68,7 +72,7 @@ export class DatabaseService {
     imdbId: string
   ): Promise<Film> => {
     console.debug('database.service.createFilm()')
-    const res = await this.db.query(
+    const res = await this.pool.query(
       'INSERT INTO films (imdbId) VALUES ($1::text) RETURNING id;',
       [imdbId],
     )
@@ -84,20 +88,26 @@ export class DatabaseService {
    * @param name to find reviewer by.
    */
   public getReviewersByName = async (name: string): Promise<User> => {
-    console.debug('DatabaseService.getReviewersByName')
+    console.debug('DatabaseService.getReviewersByName()')
+    console.debug(name)
 
-    const res = await this.db.query(
+    const res = await this.pool.query(
       'SELECT * FROM reviewers WHERE name=$1::text;',
       [name],
     )
 
+    console.debug(res)
+
     if (res.rows.length === 0) {
       return Promise.reject(`No reviewer found by the name '${name}'.`)
     }
+
+    console.debug(res)
+
     return {
       id: res.rows[0].id,
       password: res.rows[0].password,
-      username: res.rows[0].name,
+      username: name,
     }
   }
 
@@ -106,9 +116,9 @@ export class DatabaseService {
    * @param imdbId film to get reviews for.
    */
   public loadReviews = async (imdbId: string): Promise<Review[]> => {
-    console.debug('DatabaseService.loadReviews')
+    console.debug('DatabaseService.loadReviews()')
 
-    return this.db.query(
+    return this.pool.query(
       `SELECT * FROM reviews WHERE
          film=(SELECT id FROM films WHERE imdbId=$1::text);`,
       [imdbId]
