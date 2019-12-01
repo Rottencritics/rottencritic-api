@@ -1,8 +1,6 @@
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import express from 'express'
-import jsdoc from 'swagger-jsdoc'
-import swaggerUi from 'swagger-ui-express'
 
 import { logger } from './logger'
 
@@ -21,6 +19,7 @@ import {
 import { DatabaseService } from './database-service'
 import { FilmRouter, FilmService } from './film-service'
 import { OMDbService } from './omdb-service'
+import { router as swaggerRouter } from './swagger'
 
 const databaseService = new DatabaseService()
 const omdbService = new OMDbService()
@@ -39,29 +38,7 @@ app.use(bodyParser.json())
  */
 app.use('/api/auth', new AuthenticationRouter(authenticationService).router)
 app.use('/api/films', new FilmRouter(filmService).router)
-
-/**
- * Swagger specficiation.
- *
- * Contains top level details about definition as well as paths to routes with
- * further swagger documentation in the form of jsdocs.
- */
-const swaggerSpec = jsdoc({
-  apis: ['src/**/*.ts'],
-  basePath: '/api',
-  definition: {
-    info: {
-      title: 'rottencritic API',
-      version: '0.1.0',
-    },
-    openapi: '3.0.0',
-  },
-})
-
-/**
- * Serve API documentation generated from our swagger spec under `/api`.
- */
-app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/api/doc', swaggerRouter)
 
 // Route did not match anything, send 404.
 app.use((_, res) => {
