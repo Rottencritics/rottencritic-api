@@ -1,5 +1,4 @@
 import { assert, expect } from 'chai'
-import { QueryResult } from 'pg'
 import sinon from 'sinon'
 import { DatabaseService } from './database.service'
 
