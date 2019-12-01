@@ -12,10 +12,21 @@ const port = 8080
 
 import {
   authenticationMiddleware,
-  default as authRouter,
+  AuthenticationRouter,
+  AuthenticationService,
   tokenMiddleware,
 } from './authentication-service'
-import filmsRouter from './film-service'
+import { DatabasePool, DatabaseService } from './database-service'
+import { FilmRouter, FilmService } from './film-service'
+import { OMDbService } from './omdb-service'
+
+const databasePool = new DatabasePool()
+const databaseService = new DatabaseService(databasePool)
+const omdbService = new OMDbService()
+const authenticationService = new AuthenticationService(databaseService)
+const filmService = new FilmService(databaseService, omdbService)
+
+databasePool.connect()
 
 /**
  * Mount pre-path middleware.
@@ -27,8 +38,8 @@ app.use(bodyParser.json())
 /**
  * Mount routers from services.
  */
-app.use('/api/auth', authRouter)
-app.use('/api/films', filmsRouter)
+app.use('/api/auth', new AuthenticationRouter(authenticationService).router)
+app.use('/api/films', new FilmRouter(filmService).router)
 
 /**
  * Swagger specficiation.

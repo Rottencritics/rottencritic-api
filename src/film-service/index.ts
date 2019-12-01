@@ -1,2 +1,2 @@
-export { default } from './film.routes'
-export * from './film.service'
+export { FilmRouter } from './film.routes'
+export { FilmService } from './film.service'

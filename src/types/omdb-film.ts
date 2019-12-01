@@ -1,3 +1,3 @@
-interface OMDbFilm {
+export interface OMDbFilm {
   imdbId: string,
 }

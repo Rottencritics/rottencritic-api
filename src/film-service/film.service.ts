@@ -1,52 +1,57 @@
-import {
-  createFilm,
-  getFilm,
-  loadReviews,
-  saveReview
-} from '../database-service'
-import { fetchFilm } from '../omdb-service'
+import { DatabaseService } from '../database-service'
+import { OMDbService } from '../omdb-service'
+import { Film, Review } from '../types'
 
-// TODO: replace rating param with complete review
-export const reviewFilm = async (
-  imdbId: string,
-  rating: number,
-  userId: number
-): Promise<Review> => {
-  console.debug('film.service.reviewFilm()')
+export class FilmService {
 
-  let film: Film
-  try {
-    film = await getFilm(imdbId)
-  } catch (_) {
-    /**
-     * The film does not already exist in our database, so we have to make sure
-     * that the IMDb ID is valid by querying OMDb for it. If it exists, we
-     * create a new database entry for the film.
-     */
-    await fetchFilm(imdbId) // Will throw error if invalid.
-    film = await createFilm(imdbId)
+  constructor(
+    private databaseService: DatabaseService,
+    private omdbService: OMDbService) { }
+
+  public reviewFilm = async (
+    imdbId: string,
+    rating: number, // TODO: replace rating param with complete review
+    userId: number
+  ): Promise<Review> => {
+    console.debug('FilmService.reviewFilm()')
+
+    let film: Film
+    try {
+      film = await this.databaseService.getFilm(imdbId)
+    } catch (_) {
+      /**
+       * The film does not already exist in our database, so we have to make sure
+       * that the IMDb ID is valid by querying OMDb for it. If it exists, we
+       * create a new database entry for the film.
+       */
+      await this.omdbService.fetchFilm(imdbId) // Will throw error if invalid.
+      film = await this.databaseService.createFilm(imdbId)
+    }
+
+    return await this.rateFilm(film, rating, userId)
   }
 
-  return await rateFilm(film, rating, userId)
-}
+  public getReviews = async (imdbId: string): Promise<Review[]> => {
+    console.debug('FilmService.getReviews')
 
-export const getReviews = async (imdbId: string): Promise<Review[]> => {
-  return fetchFilm(imdbId) // first we make sure the film actually exist
-    .then((_) => {
-      return loadReviews(imdbId)
-    })
-}
-
-const rateFilm = (
-  film: Film,
-  rating: number,
-  userId: number
-): Promise<Review> => {
-  console.debug('film.service.rateFilm()')
-
-  if (![1, 0, -1].includes(rating)) {
-    return Promise.reject(`Invalid rating value: ${rating}`)
+    // first we make sure the film actually exist
+    return this.omdbService.fetchFilm(imdbId)
+      .then((_) => {
+        return this.databaseService.loadReviews(imdbId)
+      })
   }
 
-  return saveReview(film.id, userId, rating)
+  public rateFilm = (
+    film: Film,
+    rating: number,
+    userId: number
+  ): Promise<Review> => {
+    console.debug('FilmService.rateFilm()')
+
+    if (![1, 0, -1].includes(rating)) {
+      return Promise.reject(`Invalid rating value: ${rating}`)
+    }
+
+    return this.databaseService.saveReview(film.id, userId, rating)
+  }
 }

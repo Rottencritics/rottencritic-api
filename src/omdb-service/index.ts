@@ -1,1 +1,1 @@
-export { fetchFilm } from './omdb.service'
+export { OMDbService } from './omdb.service'
