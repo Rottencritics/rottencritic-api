@@ -13,107 +13,118 @@ export class FilmRouter {
   private createHandlers = () => {
     /**
      * @swagger
-     *  /films/{id}/reviews:
+     *  /films/{imdbId}/reviews:
      *    post:
-     *      description: Create a new review of a film.
+     *      tags: [reviews]
+     *      summary: Create a new review
+     *      security:
+     *        - bearer: []
      *      produces:
      *        - application/json
      *      parameters:
+     *        - in: path
+     *          name: imdbId
+     *          description: The IMDb ID of the targeted film for the review.
      *        - in: body
      *          name: review
-     *          description: The reviewer's review of the film.
+     *          description: The film review.
      *          schema:
      *            type: object
      *            required:
      *              - rating
      *            properties:
      *              rating:
-     *                type: int
-     *      responses:
-     *        200:
-     *          description: Successfully reviewed the film.
-     *          schema:
-     *            type: object
-     *            properties:
-     *              status:
      *                type: integer
+     *                minimum: -1
+     *                maximum: 1
+     *      responses:
+     *        201:
+     *          description: Successfully reviewed the film.
      *        400:
      *          description: Error occurred while trying to review the film.
-     *          schema:
-     *            type: object
-     *            properties:
-     *              status:
-     *                type: integer
-     *              errorMessage:
-     *                type: string
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object
+     *                properties:
+     *                  message:
+     *                    type: string
+     *                    example: 'Invalid IMDb ID.'
      */
     this.router.post('/:id/reviews', (req, res) => {
       logger.debug('FilmRoutes.postReviewsHandler()')
 
       if (req.body.review == null || req.body.review.rating == null) {
-        res.json({
-          errorMessage: 'Rating is missing in the request.',
-          status: 400,
+        res.status(400).json({
+          message: 'Rating is missing in the request.',
         })
         return
       }
 
       // id 1 => reviewer blixn
       this.filmService.reviewFilm(req.params.id, req.body.review.rating, 1)
-        .then((_) => res.json({
-          status: 200,
-        }))
-        .catch((reason) => res.json({
-          errorMessage: reason,
-          status: 400,
+        .then((_) => res.status(200).json())
+        .catch((reason) => res.status(400).json({
+          message: reason,
         }))
     })
 
     /**
      * @swagger
-     *  /films/{id}/reviews:
+     *  /films/{imdbId}/reviews:
      *    get:
-     *      description: Get list of all reviews belonging to a film.
+     *      tags: [reviews]
+     *      summary: Get a list of all reviews of a film
+     *      parameters:
+     *        - in: path
+     *          name: imdbId
+     *          description: The IMDb ID of the film to get reviews for.
+     *      security:
+     *        - basic: []
      *      produces:
      *        - application/json
      *      responses:
      *        200:
-     *          description: Successfully retrieves reviews.
-     *          schema:
-     *            type: object
-     *            properties:
-     *              status:
-     *                type: integer
-     *              reviews:
+     *          description: Successfully retrieved reviews.
+     *          content:
+     *            application/json:
+     *              schema:
      *                type: object
      *                properties:
-     *                  film:
-     *                    type: string
-     *                  reviewer:
-     *                    type: integer
-     *                  rating:
-     *                    type: integer
+     *                  reviews:
+     *                    type: array
+     *                    items:
+     *                      type: object
+     *                      properties:
+     *                        film:
+     *                          type: string
+     *                          example: tt1950186
+     *                        reviewer:
+     *                          type: integer
+     *                          example: 17
+     *                        rating:
+     *                          type: integer
+     *                          example: 1
      *        400:
-     *          description: Error occured while trying to retrieve reviews.
-     *          schema:
-     *            type: object
-     *            properties:
-     *              status:
-     *                type: integer
-     *              errorMessage:
-     *                type: string
+     *          description: Error occured while fetching reviews.
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object
+     *                properties:
+     *                  message:
+     *                    type: string
+     *                    example: Invalid IMDb ID.
      */
     this.router.get('/:id/reviews', (req, res) => {
       logger.debug('FilmRoutes.getReviewsHandler()')
 
       this.filmService.getReviews(req.params.id)
-        .then((reviews) => res.json({
+        .then((reviews) => res.status(200).json({
           reviews,
-          status: 200,
         }))
-        .catch((reason) => res.json({
-          errorMessage: reason,
-          status: 400,
+        .catch((reason) => res.status(400).json({
+          message: reason,
         }))
     })
   }
