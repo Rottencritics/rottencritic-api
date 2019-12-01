@@ -1,4 +1,5 @@
 import { assert, expect } from 'chai'
+import { QueryResult } from 'pg'
 import sinon from 'sinon'
 import { DatabaseService } from './database.service'
 
@@ -9,10 +10,13 @@ afterEach(sinon.reset)
 describe('database.service.saveReview', () => {
   it('updating existing review', async () => {
     const databaseService = new DatabaseService()
-    sinon.stub(databaseService.pool, 'query').resolves({
+    const stub = sinon.stub().resolves({
       rows: [{
         film: LE_MANS, rating: -1, reviewer: 1,
       }]
+    })
+    sinon.stub(databaseService.pool, 'connect').resolves({
+      query: stub, release: (_?: Error): void => null
     })
 
     expect(await databaseService.saveReview(1, 1, -1)).to.deep.equal({
@@ -23,10 +27,13 @@ describe('database.service.saveReview', () => {
   })
   it('creating new review', async () => {
     const databaseService = new DatabaseService()
-    sinon.stub(databaseService.pool, 'query').resolves({
+    const stub = sinon.stub().resolves({
       rows: [{
         film: LE_MANS, rating: 1, reviewer: 1,
       }]
+    })
+    sinon.stub(databaseService.pool, 'connect').resolves({
+      query: stub, release: (_?: Error): void => null
     })
     expect(await databaseService.saveReview(1, 1, 1)).to.deep.equal({
       film: LE_MANS,
