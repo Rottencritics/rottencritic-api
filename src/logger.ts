@@ -12,9 +12,11 @@ export const logger = winston.createLogger({
   level: process.env.LOG_LEVEL ?
     process.env.LOG_LEVEL.toLowerCase() : DEFAULT_LOG_LEVEL,
   transports: [
-    new winston.transports.Console(),
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
     new winston.transports.File({
-      filename: 'express.log'
+      filename: 'express.log',
     })
   ]
 })
