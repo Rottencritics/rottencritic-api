@@ -2,12 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      -image: circleci/node:10.16.3
+      - image: circleci/node:10.16.3
     steps:
       - checkout
       - run:
-        name: install
-        command: yarn install
+          name: install
+          command: yarn install
       - run:
-        name: test
-        command: yarn coverage
+          name: test
+          command: yarn coverage
