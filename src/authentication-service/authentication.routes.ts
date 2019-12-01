@@ -43,6 +43,7 @@ export class AuthenticationRouter {
         status: 401,
       },
     }), (req: express.Request, res: express.Response) => {
+      console.log('inside /token')
       res.json({
         status: 200,
         token: this.authenticationService.generateToken(
