@@ -5,3 +5,5 @@ dist/
 .env
 
 .nyc_output/
+
+express.log

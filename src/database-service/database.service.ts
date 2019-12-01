@@ -1,4 +1,5 @@
 import { Pool } from 'pg'
+import { logger } from '../logger'
 import { Film, Review, User } from '../types'
 import { CONFIG } from './database.config'
 
@@ -24,7 +25,7 @@ export class DatabaseService {
     userId: number,
     rating: number,
   ): Promise<Review> => {
-    console.debug('database.service.saveReview()')
+    logger.debug('DatabaseService.saveReview()')
 
     const client = await this.pool.connect()
     await client.query(
@@ -54,7 +55,7 @@ export class DatabaseService {
    * @param imdbId ID of film to retrieve from database.
    */
   public getFilm = async (imdbId: string): Promise<Film> => {
-    console.debug('database.service.getFilm()')
+    logger.debug('DatabaseService.getFilm()')
 
     const res = await this.pool.query(
       'SELECT id FROM films WHERE imdbId=$1::text;',
@@ -78,7 +79,8 @@ export class DatabaseService {
   public createFilm = async (
     imdbId: string
   ): Promise<Film> => {
-    console.debug('database.service.createFilm()')
+    logger.debug('DatabaseService.createFilm()')
+
     const res = await this.pool.query(
       'INSERT INTO films (imdbId) VALUES ($1::text) RETURNING id;',
       [imdbId],
@@ -95,21 +97,16 @@ export class DatabaseService {
    * @param name to find reviewer by.
    */
   public getReviewersByName = async (name: string): Promise<User> => {
-    console.debug('DatabaseService.getReviewersByName()')
-    console.debug(name)
+    logger.debug('DatabaseService.getReviewersByName()')
 
     const res = await this.pool.query(
       'SELECT * FROM reviewers WHERE name=$1::text;',
       [name],
     )
 
-    console.debug(res)
-
     if (res.rows.length === 0) {
       return Promise.reject(`No reviewer found by the name '${name}'.`)
     }
-
-    console.debug(res)
 
     return {
       id: res.rows[0].id,
@@ -123,7 +120,7 @@ export class DatabaseService {
    * @param imdbId film to get reviews for.
    */
   public loadReviews = async (imdbId: string): Promise<Review[]> => {
-    console.debug('DatabaseService.loadReviews()')
+    logger.debug('DatabaseService.loadReviews()')
 
     return this.pool.query(
       `SELECT * FROM reviews WHERE

@@ -1,4 +1,5 @@
 import express from 'express'
+import { logger } from '../logger'
 import { FilmService } from './film.service'
 
 export class FilmRouter {
@@ -47,7 +48,7 @@ export class FilmRouter {
      *                type: string
      */
     this.router.post('/:id/reviews', (req, res) => {
-      console.debug('film.handlers.postReviewsHandler()')
+      logger.debug('FilmRoutes.postReviewsHandler()')
 
       if (req.body.review == null || req.body.review.rating == null) {
         res.json({
@@ -103,7 +104,7 @@ export class FilmRouter {
      *                type: string
      */
     this.router.get('/:id/reviews', (req, res) => {
-      console.debug('film.handlers.getReviewsHandler()')
+      logger.debug('FilmRoutes.getReviewsHandler()')
 
       this.filmService.getReviews(req.params.id)
         .then((reviews) => res.json({

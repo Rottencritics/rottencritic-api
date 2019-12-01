@@ -1,4 +1,5 @@
 import { DatabaseService } from '../database-service'
+import { logger } from '../logger'
 import { OMDbService } from '../omdb-service'
 import { Film, Review } from '../types'
 
@@ -13,7 +14,7 @@ export class FilmService {
     rating: number, // TODO: replace rating param with complete review
     userId: number
   ): Promise<Review> => {
-    console.debug('FilmService.reviewFilm()')
+    logger.debug('FilmService.reviewFilm()')
 
     let film: Film
     try {
@@ -32,7 +33,7 @@ export class FilmService {
   }
 
   public getReviews = async (imdbId: string): Promise<Review[]> => {
-    console.debug('FilmService.getReviews')
+    logger.debug('FilmService.getReviews()')
 
     // first we make sure the film actually exist
     return this.omdbService.fetchFilm(imdbId)
@@ -46,7 +47,7 @@ export class FilmService {
     rating: number,
     userId: number
   ): Promise<Review> => {
-    console.debug('FilmService.rateFilm()')
+    logger.debug('FilmService.rateFilm()')
 
     if (![1, 0, -1].includes(rating)) {
       return Promise.reject(`Invalid rating value: ${rating}`)

@@ -1,5 +1,6 @@
 import 'isomorphic-fetch'
 
+import { logger } from '../logger'
 import { OMDbFilm } from '../types'
 
 export const OMDB_API_KEY = process.env.OMDB_API_KEY
@@ -8,7 +9,7 @@ export const OMDB_BASE_URI = `http://omdbapi.com/?apikey=${OMDB_API_KEY}`
 export class OMDbService {
 
   public fetchFilm = (imdbId: string): Promise<OMDbFilm> => {
-    console.debug('omdb.service.fetchFilm()')
+    logger.debug('OMDbService.fetchFilm()')
 
     return fetch(`${OMDB_BASE_URI}&i=${imdbId}`)
       .then((res) => res.json())
