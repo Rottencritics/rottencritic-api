@@ -1,5 +1,7 @@
 # rottencritic API
 
+[![CircleCI](https://circleci.com/gh/Rottencritics/rottencritic-api/tree/master.svg?style=svg)](https://circleci.com/gh/Rottencritics/rottencritic-api/tree/master)
+
 ## Running
 
 Start the server by running `yarn start`.
