@@ -26,19 +26,26 @@ export class DatabaseService {
   ): Promise<Review> => {
     console.debug('database.service.saveReview()')
 
-    const res = await this.pool.query(
+    const client = await this.pool.connect()
+    await client.query(
       `INSERT INTO reviews (reviewer,film,rating) VALUES ($1,$2,$3)
          ON CONFLICT (reviewer,film) DO UPDATE
-           SET rating = EXCLUDED.rating;
-       SELECT reviewer,film,rating FROM reviews WHERE
-         reviewer=$1 AND film=$2;`,
+           SET rating = EXCLUDED.rating;`,
       [userId, filmId, rating]
     )
 
+    const { rows } = await client.query(
+      `SELECT reviewer,film,rating FROM reviews WHERE
+         reviewer=$1 AND film=$2;`,
+      [userId, filmId]
+    )
+
+    client.release()
+
     return {
-      film: res.rows[0].film,
-      rating: res.rows[0].rating,
-      reviewer: res.rows[0].reviewer,
+      film: rows[0].film,
+      rating: rows[0].rating,
+      reviewer: rows[0].reviewer,
     }
   }
 

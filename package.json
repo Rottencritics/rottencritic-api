@@ -12,8 +12,8 @@
 		"build": "tsc",
 		"prestart": "yarn build",
 		"pretest": "yarn build",
-		"test": "mocha --require ts-node/register --recursive test/ src/**/*.spec.ts",
-		"coverage": "nyc mocha --require ts-node/register --recursive test/ src/**/*.spec.ts",
+		"test": "ENV=test mocha --require ts-node/register --recursive test/ src/**/*.spec.ts",
+		"coverage": "ENV=test nyc mocha --require ts-node/register --recursive test/ src/**/*.spec.ts",
 		"start": "node dist/app.js"
 	},
 	"contributors": [
