@@ -36,8 +36,6 @@ export const authenticationMiddleware = (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  console.debug('authenticationMiddleware()')
-  console.debug(err)
   if (err.name === 'UnauthorizedError') {
     res.json({
       message: err.message + '.', // someone was sloppy with punctuation

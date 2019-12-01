@@ -4,6 +4,8 @@ import express from 'express'
 import jsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 
+import { logger } from './logger'
+
 // Read config from environment variables.
 dotenv.config()
 
@@ -71,5 +73,5 @@ app.use((_, res) => {
 
 // Launch server.
 app.listen(port, () => {
-  console.log(`Server started at: http://localhost:${port}`)
+  logger.info(`Server started at: http://localhost:${port}`)
 })
