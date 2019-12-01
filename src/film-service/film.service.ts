@@ -28,7 +28,7 @@ export class FilmService {
       film = await this.databaseService.createFilm(imdbId)
     }
 
-    return await this.rateFilm(film, rating, userId)
+    return this.rateFilm(film, rating, userId)
   }
 
   public getReviews = async (imdbId: string): Promise<Review[]> => {
@@ -41,7 +41,7 @@ export class FilmService {
       })
   }
 
-  public rateFilm = (
+  private rateFilm = (
     film: Film,
     rating: number,
     userId: number
