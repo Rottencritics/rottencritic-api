@@ -14,11 +14,38 @@ const swaggerSpec = jsdoc({
   apis: ['src/**/*.ts'],
   basePath: '/api',
   definition: {
+    components: {
+      securitySchemes: {
+        basic: {
+          in: 'header',
+          scheme: 'basic',
+          type: 'http',
+        },
+        bearer: {
+          bearerFormat: 'JWT',
+          in: 'header',
+          scheme: 'bearer',
+          type: 'http',
+        }
+      }
+    },
     info: {
+      description:
+        `This is the API specification for rottencritic's API.`,
       title: 'rottencritic API',
       version: '0.1.0',
     },
     openapi: '3.0.0',
+    tags: [
+      {
+        description: 'Operations on film reviews.',
+        name: 'reviews',
+      },
+      {
+        description: 'Resources for authentication.',
+        name: 'authentication',
+      },
+    ],
   },
 })
 
