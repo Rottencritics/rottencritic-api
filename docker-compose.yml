@@ -9,7 +9,7 @@ services:
     links:
       - postgres
     environment:
-      LOG_LEVEL: DEBUG
+      LOG_LEVEL: VERBOSE
 
   postgres:
     image: postgres:10.4

@@ -1,20 +1,20 @@
 import { AuthenticatedRequest } from 'authenticated-request'
 import express from 'express'
 import { logger } from '../logger'
-import { FilmService } from './film.service'
+import { ReviewService } from './review.service'
 
-export class FilmRouter {
+export class ReviewRouter {
 
   public router = express.Router()
 
-  constructor(private filmService: FilmService) {
+  constructor(private filmService: ReviewService) {
     this.createHandlers()
   }
 
   private createHandlers = () => {
     /**
      * @swagger
-     *  /films/{imdbId}/reviews:
+     *  /reviews:
      *    post:
      *      tags: [reviews]
      *      summary: Create a new review
@@ -23,7 +23,7 @@ export class FilmRouter {
      *      produces:
      *        - application/json
      *      parameters:
-     *        - in: path
+     *        - in: query
      *          name: imdbId
      *          description: The IMDb ID of the targeted film for the review.
      *        - in: body
@@ -52,7 +52,7 @@ export class FilmRouter {
      *                    type: string
      *                    example: 'Invalid IMDb ID.'
      */
-    this.router.post('/:id/reviews', (req: AuthenticatedRequest, res) => {
+    this.router.post('/', (req: AuthenticatedRequest, res) => {
       logger.debug('FilmRoutes.postReviewsHandler()')
 
       if (req.body.review == null || req.body.review.rating == null) {
@@ -63,7 +63,7 @@ export class FilmRouter {
       }
 
       this.filmService.reviewFilm(
-        req.params.id, req.body.review.rating, req.token.user)
+        req.query.imdbId, req.body.review.rating, req.token.user)
 
         .then((_) => res.status(201).json())
         .catch((reason) => {
@@ -76,12 +76,12 @@ export class FilmRouter {
 
     /**
      * @swagger
-     *  /films/{imdbId}/reviews:
+     *  /reviews:
      *    get:
      *      tags: [reviews]
      *      summary: Get a list of all reviews of a film
      *      parameters:
-     *        - in: path
+     *        - in: query
      *          name: imdbId
      *          description: The IMDb ID of the film to get reviews for.
      *      produces:
@@ -119,10 +119,10 @@ export class FilmRouter {
      *                    type: string
      *                    example: Invalid IMDb ID.
      */
-    this.router.get('/:id/reviews', (req, res) => {
+    this.router.get('/', (req, res) => {
       logger.debug('FilmRoutes.getReviewsHandler()')
 
-      this.filmService.getReviews(req.params.id)
+      this.filmService.getReviews(req.query.imdbId)
         .then((reviews) => res.status(200).json({
           reviews,
         }))

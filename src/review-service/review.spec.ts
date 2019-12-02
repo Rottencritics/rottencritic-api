@@ -3,7 +3,7 @@ import sinon, { SinonSandbox } from 'sinon'
 import { DatabaseService } from '../database-service'
 import { OMDbService } from '../omdb-service'
 import { Review } from '../types'
-import { FilmService } from './film.service'
+import { ReviewService } from './review.service'
 
 const LE_MANS = 'tt1950186'
 const BAD_IMDB_ID = 'tt196'
@@ -37,7 +37,7 @@ describe('film.service.reviewFilm', () => {
       reviewer: user,
     })
 
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
 
     expect(await filmService.reviewFilm(LE_MANS, rating, user)).to.deep.equal({
       film: LE_MANS,
@@ -49,7 +49,7 @@ describe('film.service.reviewFilm', () => {
   it('invalid imdb id', () => {
     const user = 4
     const rating = 1
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
 
     sandbox.stub(databaseService, 'getFilm').rejects('Film does not exist')
     sandbox.stub(omdbService, 'fetchFilm').rejects('IMDb ID is not valid.')
@@ -62,7 +62,7 @@ describe('film.service.reviewFilm', () => {
   it('film does not exist in db', async () => {
     const user = 4
     const rating = 1
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
 
     sandbox.stub(databaseService, 'getFilm').rejects('Film does not exist')
     sandbox.stub(databaseService, 'createFilm').resolves({ id: 17, imdbId: LE_MANS })
@@ -83,7 +83,7 @@ describe('film.service.reviewFilm', () => {
   it('invalid rating', () => {
     const user = 4
     const rating = 13
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
 
     sandbox.stub(databaseService, 'getFilm').resolves({
       id: 5,
@@ -109,7 +109,7 @@ describe('film.service.getReviews', () => {
 
   it('film does not exist in imdb', () => {
     sandbox.stub(omdbService, 'fetchFilm').rejects('Does not exist in IMDB.')
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
     filmService.getReviews(BAD_IMDB_ID)
       .then((_) => assert.fail('Should have thrown an error.'))
       .catch((err) => expect(err.name).to.equal('Does not exist in IMDB.'))
@@ -139,7 +139,7 @@ describe('film.service.getReviews', () => {
     ]
 
     sandbox.stub(databaseService, 'loadReviews').resolves(expectedResult)
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
     expect(await filmService.getReviews(LE_MANS)).to.deep.equal(expectedResult)
   })
 
@@ -150,7 +150,7 @@ describe('film.service.getReviews', () => {
     })
 
     sandbox.stub(databaseService, 'loadReviews').resolves([])
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
     expect(await filmService.getReviews(LE_MANS)).to.deep.equal([])
   })
 
@@ -168,7 +168,7 @@ describe('film.service.getReviews', () => {
     ]
 
     sandbox.stub(databaseService, 'loadReviews').resolves(expectedResult)
-    const filmService = new FilmService(databaseService, omdbService)
+    const filmService = new ReviewService(databaseService, omdbService)
     expect(await filmService.getReviews(LE_MANS)).to.deep.equal(expectedResult)
   })
 })
