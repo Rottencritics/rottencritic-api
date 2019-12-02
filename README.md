@@ -12,6 +12,7 @@ documentation at: http://localhost/api/doc
 ## Installation & Deployment
 
 The easiest way to start a server for the rottencritic API is via Docker.
+But first the project dependencies have to be installed: `yarn install`
 
 ### Enironment Setup
 
