@@ -10,11 +10,18 @@ export class AuthenticationService {
 
   /**
    * Generate a new token for user.
-   * @param username name of user to generate token for/of.
+   * @param authorizationHeader The Basic Authentication Header where the
+   *                            username we create a token for exists.
    */
-  public generateToken = (username: string): string => {
+  public generateToken = async (authorizationHeader: string): Promise<string> => {
+    logger.debug('AuthenticationService.generateToken()')
+
+    const { id } =
+      await this.databaseService.getReviewerByName(
+        this.extractUsernameFromAuthorizationHeader(authorizationHeader))
+
     return jstoken.sign(
-      { user: username },
+      { user: id },
       process.env.TOKEN_SECRET,
       { expiresIn: '1h', })
   }
@@ -42,14 +49,15 @@ export class AuthenticationService {
 
   /**
    * Get a user's name from the authorization header of a basic auth request.
-   * @param req the request to retrieve header from.
+   * @param authorizationHeader the Basic Authentication header to get
+   *                            username from.
    */
-  public extractUsernameFromAuthorizationHeader = (
-    req: express.Request
+  private extractUsernameFromAuthorizationHeader = (
+    authorizationHeader: string
   ) => {
     logger.debug('AuthenticationService.extractUsernameFromAuthorzationHeader()')
 
-    return new Buffer(req.headers.authorization.split(' ').pop(), 'base64')
+    return Buffer.from(authorizationHeader.split(' ').pop(), 'base64')
       .toString('ascii')
       .split(':')[0]
   }

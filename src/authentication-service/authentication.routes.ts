@@ -53,12 +53,19 @@ export class AuthenticationRouter {
       unauthorizedResponse: {
         message: 'Could not authenticate user.',
       },
-    }), (req: express.Request, res: express.Response) => {
+    }), async (req: express.Request, res: express.Response) => {
       logger.debug('POST /auth/token')
-      res.status(200).json({
-        token: this.authenticationService.generateToken(
-          this.authenticationService.extractUsernameFromAuthorizationHeader(req)),
-      })
+
+      this.authenticationService.generateToken(req.headers.authorization)
+        .then((token) => res.status(200).json({
+          token
+        }))
+        .catch((err) => {
+          logger.error(err)
+          res.status(500).json({
+            message: 'Failed to generate token for user.'
+          })
+        })
     })
   }
 }

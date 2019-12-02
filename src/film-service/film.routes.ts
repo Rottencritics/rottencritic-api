@@ -1,3 +1,4 @@
+import { AuthenticatedRequest } from 'authenticated-request'
 import express from 'express'
 import { logger } from '../logger'
 import { FilmService } from './film.service'
@@ -51,7 +52,7 @@ export class FilmRouter {
      *                    type: string
      *                    example: 'Invalid IMDb ID.'
      */
-    this.router.post('/:id/reviews', (req, res) => {
+    this.router.post('/:id/reviews', (req: AuthenticatedRequest, res) => {
       logger.debug('FilmRoutes.postReviewsHandler()')
 
       if (req.body.review == null || req.body.review.rating == null) {
@@ -61,12 +62,16 @@ export class FilmRouter {
         return
       }
 
-      // id 1 => reviewer blixn
-      this.filmService.reviewFilm(req.params.id, req.body.review.rating, 1)
-        .then((_) => res.status(200).json())
-        .catch((reason) => res.status(400).json({
-          message: reason,
-        }))
+      this.filmService.reviewFilm(
+        req.params.id, req.body.review.rating, req.token.user)
+
+        .then((_) => res.status(201).json())
+        .catch((reason) => {
+          logger.debug(reason)
+          res.status(400).json({
+            message: reason,
+          })
+        })
     })
 
     /**
@@ -121,9 +126,12 @@ export class FilmRouter {
         .then((reviews) => res.status(200).json({
           reviews,
         }))
-        .catch((reason) => res.status(400).json({
-          message: reason,
-        }))
+        .catch((reason) => {
+          logger.debug(reason)
+          res.status(400).json({
+            message: reason,
+          })
+        })
     })
   }
 }
