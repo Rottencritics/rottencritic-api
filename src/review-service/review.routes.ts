@@ -25,6 +25,7 @@ export class ReviewRouter {
      *      parameters:
      *        - in: query
      *          name: imdbId
+     *          required: true
      *          description: The IMDb ID of the targeted film for the review.
      *        - in: body
      *          name: review
@@ -79,11 +80,19 @@ export class ReviewRouter {
      *  /reviews:
      *    get:
      *      tags: [reviews]
-     *      summary: Get a list of all reviews of a film
+     *      summary: Retrieve a list of reviews. Either grouped by film or by
+     *               reviewer.
      *      parameters:
      *        - in: query
      *          name: imdbId
+     *          type: string
      *          description: The IMDb ID of the film to get reviews for.
+     *          example: tt1950186
+     *        - in: query
+     *          name: reviewer
+     *          type: string
+     *          description: Reviewer to get reviews from.
+     *          example: bobby
      *      produces:
      *        - application/json
      *      responses:
@@ -104,7 +113,7 @@ export class ReviewRouter {
      *                          example: tt1950186
      *                        reviewer:
      *                          type: integer
-     *                          example: 17
+     *                          example: bobby
      *                        rating:
      *                          type: integer
      *                          example: 1
@@ -121,8 +130,9 @@ export class ReviewRouter {
      */
     this.router.get('/', (req, res) => {
       logger.debug('FilmRoutes.getReviewsHandler()')
+      logger.debug(`imdbId=${req.query.imdbId},reviewer=${req.query.reviewer}`)
 
-      this.filmService.getReviews(req.query.imdbId)
+      this.filmService.getReviews(req.query.imdbId, req.query.reviewer)
         .then((reviews) => res.status(200).json({
           reviews,
         }))

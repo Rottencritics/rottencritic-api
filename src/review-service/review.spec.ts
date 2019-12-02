@@ -24,7 +24,8 @@ describe('film.service.reviewFilm', () => {
   })
 
   it('film already exists in db', async () => {
-    const user = 4
+    const user = 'Freddie'
+    const userId = 4
     const rating = 1
 
     sandbox.stub(databaseService, 'getFilm').resolves({
@@ -39,7 +40,7 @@ describe('film.service.reviewFilm', () => {
 
     const filmService = new ReviewService(databaseService, omdbService)
 
-    expect(await filmService.reviewFilm(LE_MANS, rating, user)).to.deep.equal({
+    expect(await filmService.reviewFilm(LE_MANS, rating, userId)).to.deep.equal({
       film: LE_MANS,
       rating,
       reviewer: user,
@@ -60,7 +61,8 @@ describe('film.service.reviewFilm', () => {
   })
 
   it('film does not exist in db', async () => {
-    const user = 4
+    const user = 'Henry'
+    const userId = 4
     const rating = 1
     const filmService = new ReviewService(databaseService, omdbService)
 
@@ -73,7 +75,7 @@ describe('film.service.reviewFilm', () => {
     })
     sandbox.stub(omdbService, 'fetchFilm').resolves({ imdbId: LE_MANS })
 
-    expect(await filmService.reviewFilm(LE_MANS, rating, user))
+    expect(await filmService.reviewFilm(LE_MANS, rating, userId))
       .to.deep.equal({
         film: LE_MANS,
         rating,
@@ -124,21 +126,21 @@ describe('film.service.getReviews', () => {
       {
         film: LE_MANS,
         rating: 1,
-        reviewer: 16,
+        reviewer: 'Henry',
       },
       {
         film: LE_MANS,
         rating: -1,
-        reviewer: 15,
+        reviewer: 'Bergkamp',
       },
       {
         film: LE_MANS,
         rating: -1,
-        reviewer: 151,
+        reviewer: 'Pires',
       },
     ]
 
-    sandbox.stub(databaseService, 'loadReviews').resolves(expectedResult)
+    sandbox.stub(databaseService, 'loadReviewsByIMDbID').resolves(expectedResult)
     const filmService = new ReviewService(databaseService, omdbService)
     expect(await filmService.getReviews(LE_MANS)).to.deep.equal(expectedResult)
   })
@@ -149,7 +151,7 @@ describe('film.service.getReviews', () => {
       imdbId: LE_MANS,
     })
 
-    sandbox.stub(databaseService, 'loadReviews').resolves([])
+    sandbox.stub(databaseService, 'loadReviewsByIMDbID').resolves([])
     const filmService = new ReviewService(databaseService, omdbService)
     expect(await filmService.getReviews(LE_MANS)).to.deep.equal([])
   })
@@ -163,11 +165,11 @@ describe('film.service.getReviews', () => {
     const expectedResult: Review[] = [{
       film: LE_MANS,
       rating: 1,
-      reviewer: 16,
+      reviewer: 'Freddie',
     },
     ]
 
-    sandbox.stub(databaseService, 'loadReviews').resolves(expectedResult)
+    sandbox.stub(databaseService, 'loadReviewsByIMDbID').resolves(expectedResult)
     const filmService = new ReviewService(databaseService, omdbService)
     expect(await filmService.getReviews(LE_MANS)).to.deep.equal(expectedResult)
   })

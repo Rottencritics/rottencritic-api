@@ -126,7 +126,7 @@ describe('database.service.loadReviews', () => {
     sinon.stub(databaseService.pool, 'query').resolves({
       rows: []
     })
-    expect(await databaseService.loadReviews(LE_MANS)).to.deep.equal([])
+    expect(await databaseService.loadReviewsByIMDbID(LE_MANS)).to.deep.equal([])
   })
   it('mulitple reviews exist', async () => {
     const databaseService = new DatabaseService()
@@ -149,7 +149,7 @@ describe('database.service.loadReviews', () => {
         },
       ],
     })
-    expect(await databaseService.loadReviews(LE_MANS)).to.deep.equal([
+    expect(await databaseService.loadReviewsByIMDbID(LE_MANS)).to.deep.equal([
       {
         film: LE_MANS,
         rating: 1,
@@ -176,7 +176,7 @@ describe('database.service.loadReviews', () => {
         reviewer: 17,
       }],
     })
-    expect(await databaseService.loadReviews(LE_MANS)).to.deep.equal([{
+    expect(await databaseService.loadReviewsByIMDbID(LE_MANS)).to.deep.equal([{
       film: LE_MANS,
       rating: -1,
       reviewer: 17,
