@@ -3,30 +3,38 @@
 [![CircleCI](https://circleci.com/gh/Rottencritics/rottencritic-api/tree/master.svg?style=svg)](https://circleci.com/gh/Rottencritics/rottencritic-api/tree/master)
 [![DeepScan grade](https://deepscan.io/api/teams/6338/projects/8295/branches/96187/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=6338&pid=8295&bid=96187)
 
-## Running
+## Installation & Deployment
 
-Start the server by running `yarn start`.
+The easiest way to start a server for the rottencritic API is via Docker.
 
-### Docker
+### Enironment Setup
 
-Start the docker instance by running:
+In order for the server to function a few environment variables must be set:
 
-`docker-compose up -d`
+- `POSTGRES_DB` - The name of the database used.
+- `POSTGRES_USER` - The name of the database user used.
+- `POSTGRES_PASS` - The password of the database user used.
+- `OMDB_API_KEY` - The API key used for connecting to [OMDb](http://www.omdbapi.com/).
+- `TOKEN_SECRET` - A secret key used for generating tokens.
 
-#### Environment
+These can be set in a `.env`-file for example.
 
-To launch the docker some environment variables are required to be set:
+### Using Docker
 
-- POSTGRES_DB: Name of the database.
-- POSTGRES_USER: Name of the database user.
-- POSTGRES_PASS: Database user's password.
+To deploy the application via docker run:
 
-.env must be filled.
-
-```
-yarn build
-docker-compose up -d --build
-docker-compose down
-sudo rm -rf postgres-data/
+```bash
+yarn build && docker-compose up -d
 ```
 
+### Local Development Server
+
+The easiest way to deploy the application is via Docker,
+but to start an application server simply run `yarn start`.
+**NOTE:** This requires that a postgres database is installed and configured.
+
+## Updating Database Schemas
+
+In order for the database to be updated with new schemas while using Docker
+the default data directory has to be emptied.
+If the directory is not emptied, no sql scripts will be ran (unless manually).
