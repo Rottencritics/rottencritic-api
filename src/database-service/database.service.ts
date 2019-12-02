@@ -96,8 +96,8 @@ export class DatabaseService {
    * Find reviewer by name.
    * @param name to find reviewer by.
    */
-  public getReviewersByName = async (name: string): Promise<User> => {
-    logger.debug('DatabaseService.getReviewersByName()')
+  public getReviewerByName = async (name: string): Promise<User> => {
+    logger.debug('DatabaseService.getReviewerByName()')
 
     const res = await this.pool.query(
       'SELECT * FROM reviewers WHERE name=$1::text;',

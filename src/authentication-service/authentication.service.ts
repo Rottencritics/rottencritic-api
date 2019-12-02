@@ -33,7 +33,7 @@ export class AuthenticationService {
   ) => {
     logger.debug('AuthenticationService.validateCredentials()')
 
-    return this.databaseService.getReviewersByName(username).then((user) => {
+    return this.databaseService.getReviewerByName(username).then((user) => {
       return authorize(null, user.password === password)
     }).catch((_) => {
       return authorize(null, false)
