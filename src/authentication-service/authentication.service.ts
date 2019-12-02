@@ -1,4 +1,3 @@
-import express from 'express'
 import jstoken from 'jsonwebtoken'
 
 import { DatabaseService } from '../database-service'
