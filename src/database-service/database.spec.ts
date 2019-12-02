@@ -102,7 +102,7 @@ describe('database.service.getReviewersByName', () => {
         password: 'secret',
       }]
     })
-    expect(await databaseService.getReviewersByName('Shelby')).to.deep.equal({
+    expect(await databaseService.getReviewerByName('Shelby')).to.deep.equal({
       id: 17,
       password: 'secret',
       username: 'Shelby',
@@ -113,7 +113,7 @@ describe('database.service.getReviewersByName', () => {
     sinon.stub(databaseService.pool, 'query').resolves({
       rows: []
     })
-    databaseService.getReviewersByName('Shelby')
+    databaseService.getReviewerByName('Shelby')
       .then(() => assert.fail('Should have failed.'))
       .catch((err) => expect(err).to.equal(
         'No reviewer found by the name \'Shelby\'.'))

@@ -28,6 +28,9 @@ export class DatabaseService {
     logger.debug('DatabaseService.saveReview()')
 
     const client = await this.pool.connect()
+
+    logger.verbose(`Saving Review to DB:
+      filmdId=${filmId},userId=${userId},rating=${rating}`)
     await client.query(
       `INSERT INTO reviews (reviewer,film,rating) VALUES ($1,$2,$3)
          ON CONFLICT (reviewer,film) DO UPDATE
@@ -96,8 +99,8 @@ export class DatabaseService {
    * Find reviewer by name.
    * @param name to find reviewer by.
    */
-  public getReviewersByName = async (name: string): Promise<User> => {
-    logger.debug('DatabaseService.getReviewersByName()')
+  public getReviewerByName = async (name: string): Promise<User> => {
+    logger.debug('DatabaseService.getReviewerByName()')
 
     const res = await this.pool.query(
       'SELECT * FROM reviewers WHERE name=$1::text;',
