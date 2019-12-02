@@ -80,7 +80,7 @@ export class FilmRouter {
      *          name: imdbId
      *          description: The IMDb ID of the film to get reviews for.
      *      security:
-     *        - basic: []
+     *        - bearer: []
      *      produces:
      *        - application/json
      *      responses:
