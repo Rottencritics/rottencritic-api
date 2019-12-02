@@ -7,6 +7,7 @@ import jwt from 'express-jwt'
 const PUBLIC_URIS = [
   { url: /^\/api\/doc\/.*/, methods: ['GET'] },
   { url: '/api/auth/token', methods: ['POST'] },
+  { url: /^\/api\/films\/.*\/reviews/, methods: ['GET'] },
 ]
 
 /**
