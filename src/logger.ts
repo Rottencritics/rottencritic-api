@@ -9,6 +9,13 @@ const DEFAULT_LOG_LEVEL = 'info'
 export const logger = winston.createLogger({
   exitOnError: false,
   format: winston.format.json(),
+  levels: {
+    error: 0,
+    warn: 1,
+    info: 2,
+    debug: 3,
+    verbose: 4,
+  },
   level: process.env.LOG_LEVEL ?
     process.env.LOG_LEVEL.toLowerCase() : DEFAULT_LOG_LEVEL,
   transports: [
