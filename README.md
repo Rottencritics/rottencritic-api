@@ -3,6 +3,12 @@
 [![CircleCI](https://circleci.com/gh/Rottencritics/rottencritic-api/tree/master.svg?style=svg)](https://circleci.com/gh/Rottencritics/rottencritic-api/tree/master)
 [![DeepScan grade](https://deepscan.io/api/teams/6338/projects/8295/branches/96187/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=6338&pid=8295&bid=96187)
 
+## API Documentation
+
+The API is documented under the resource `/api/doc`.
+I.e. if the server is up and running on localhost you could find the
+documentation at: http://localhost/api/doc
+
 ## Installation & Deployment
 
 The easiest way to start a server for the rottencritic API is via Docker.
