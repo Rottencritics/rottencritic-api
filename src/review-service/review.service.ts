@@ -3,7 +3,7 @@ import { logger } from '../logger'
 import { OMDbService } from '../omdb-service'
 import { Film, Review } from '../types'
 
-export class FilmService {
+export class ReviewService {
 
   constructor(
     private databaseService: DatabaseService,

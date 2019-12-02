@@ -17,14 +17,14 @@ import {
   tokenMiddleware,
 } from './authentication-service'
 import { DatabaseService } from './database-service'
-import { FilmRouter, FilmService } from './film-service'
 import { OMDbService } from './omdb-service'
+import { ReviewRouter, ReviewService } from './review-service'
 import { router as swaggerRouter } from './swagger'
 
 const databaseService = new DatabaseService()
 const omdbService = new OMDbService()
 const authenticationService = new AuthenticationService(databaseService)
-const filmService = new FilmService(databaseService, omdbService)
+const reviewService = new ReviewService(databaseService, omdbService)
 
 /**
  * Mount pre-path middleware.
@@ -37,7 +37,7 @@ app.use(bodyParser.json())
  * Mount routers from services.
  */
 app.use('/api/auth', new AuthenticationRouter(authenticationService).router)
-app.use('/api/films', new FilmRouter(filmService).router)
+app.use('/api/reviews', new ReviewRouter(reviewService).router)
 app.use('/api/doc', swaggerRouter)
 
 // Route did not match anything, send 404.
