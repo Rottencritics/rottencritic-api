@@ -118,6 +118,15 @@ export class DatabaseService {
     }
   }
 
+  public reviewerExists = async (name: string): Promise<boolean> => {
+    const { rows } = await this.pool.query(
+      'SELECT id FROM reviewers WHERE name=$1::text',
+      [name],
+    )
+
+    return rows.length !== 0
+  }
+
   /**
    * Get all, full, reviews of a given film.
    * @param imdbId film to get reviews for.
@@ -198,5 +207,18 @@ export class DatabaseService {
       rating: rows[0].rating,
       reviewer: rows[0].name,
     }]
+  }
+
+  public saveReviewer = async (
+    username: string,
+    password: string
+  ): Promise<number> => {
+    const { rows } = await this.pool.query(
+      `INSERT INTO reviewers (name,password)
+       VALUES ($1::text,$2::text)
+       RETURNING id`,
+      [username, password])
+
+    return rows[0].id
   }
 }

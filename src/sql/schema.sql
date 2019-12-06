@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS films(
 
 CREATE TABLE IF NOT EXISTS reviewers(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50),
+    name VARCHAR(50) UNIQUE,
     password VARCHAR(128) -- FIXME: Update this when salt is decided.
 );
 
