@@ -1,7 +1,7 @@
 import { DatabaseService } from '../database-service'
 import { logger } from '../logger'
 import { OMDbService } from '../omdb-service'
-import { Film, Review } from '../types'
+import { Film, Review, User } from '../types'
 
 export class ReviewService {
 
@@ -32,14 +32,35 @@ export class ReviewService {
     return this.rateFilm(film, rating, userId)
   }
 
-  public getReviews = async (imdbId: string): Promise<Review[]> => {
+  public getReviews = async (
+    imdbId?: string,
+    reviewer?: string
+  ): Promise<Review[]> => {
     logger.debug('FilmService.getReviews()')
 
-    // first we make sure the film actually exist
-    return this.omdbService.fetchFilm(imdbId)
-      .then((_) => {
-        return this.databaseService.loadReviews(imdbId)
-      })
+    let user: User
+    if (imdbId) {
+      // Make sure the film actually exists
+      await this.omdbService.fetchFilm(imdbId)
+
+      if (reviewer) {
+        user = await this.databaseService.getReviewerByName(reviewer)
+      } else {
+        logger.verbose('Getting review based on imdbID.')
+        return this.databaseService.loadReviewsByIMDbID(imdbId)
+      }
+
+      logger.verbose('Getting review based on reviewer/imdbID.')
+      return this.databaseService.loadReview(imdbId, user.id)
+
+    } else if (reviewer) {
+      user = await this.databaseService.getReviewerByName(reviewer)
+
+      logger.verbose('Getting review based on reviewer.')
+      return this.databaseService.loadReviewsByReviewer(user.id)
+    }
+
+    return Promise.reject('IMDb ID or reviewer must be given.')
   }
 
   private rateFilm = (

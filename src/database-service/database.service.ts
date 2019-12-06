@@ -122,12 +122,16 @@ export class DatabaseService {
    * Get all, full, reviews of a given film.
    * @param imdbId film to get reviews for.
    */
-  public loadReviews = async (imdbId: string): Promise<Review[]> => {
+  public loadReviewsByIMDbID = async (imdbId: string): Promise<Review[]> => {
     logger.debug('DatabaseService.loadReviews()')
 
     return this.pool.query(
-      `SELECT * FROM reviews WHERE
-         film=(SELECT id FROM films WHERE imdbId=$1::text);`,
+      `SELECT u.name,f.imdbid,r.reviewer,r.rating FROM reviews r
+        INNER JOIN films f
+          ON r.film=f.id
+        INNER JOIN reviewers u
+          ON r.reviewer=u.id
+        WHERE f.imdbid=$1::text`,
       [imdbId]
     ).then((res) => {
       return res.rows.map(
@@ -135,9 +139,64 @@ export class DatabaseService {
           return {
             film: imdbId,
             rating: review.rating,
-            reviewer: review.reviewer,
+            reviewer: review.name,
           }
         })
     })
+  }
+
+  public loadReviewsByReviewer = async (
+    reviewer: number
+  ): Promise<Review[]> => {
+    logger.debug('DatabaseService.loadReviewsByReviewer()')
+
+    const { rows } = await this.pool.query(
+      `SELECT u.name,f.imdbid,r.reviewer,r.rating FROM reviews r
+        INNER JOIN films f
+          ON r.film=f.id
+        INNER JOIN reviewers u
+          ON r.reviewer=u.id
+        WHERE r.reviewer=$1`,
+      [reviewer]
+    )
+
+    return rows.map(
+      (review): Review => {
+        return {
+          film: review.imdbid,
+          rating: review.rating,
+          reviewer: review.name,
+        }
+      }
+    )
+  }
+
+  public loadReview = async (
+    imdbId: string,
+    reviewer: number
+  ): Promise<Review[]> => {
+    logger.debug('DatabaseService.loadReview()')
+
+    const { rows } = await this.pool.query(
+      `SELECT u.name,r.reviewer,r.rating FROM reviews r
+        INNER JOIN films f
+          ON r.film=f.id
+        INNER JOIN reviewers u
+          ON r.reviewer=u.id
+        WHERE f.imdbId=$1::text AND r.reviewer=$2`,
+      [imdbId, reviewer]
+    )
+
+    logger.debug(rows)
+
+    if (rows.length === 0) {
+      return []
+    }
+
+    return [{
+      film: imdbId,
+      rating: rows[0].rating,
+      reviewer: rows[0].name,
+    }]
   }
 }
