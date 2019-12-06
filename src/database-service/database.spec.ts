@@ -135,17 +135,17 @@ describe('database.service.loadReviews', () => {
         {
           film: 17,
           rating: 1,
-          reviewer: 1,
+          name: 'Keown',
         },
         {
           film: 17,
           rating: 1,
-          reviewer: 2,
+          name: 'Campbell',
         },
         {
           film: 17,
           rating: -1,
-          reviewer: 3,
+          name: 'Lauren',
         },
       ],
     })
@@ -153,17 +153,17 @@ describe('database.service.loadReviews', () => {
       {
         film: LE_MANS,
         rating: 1,
-        reviewer: 1,
+        reviewer: 'Keown',
       },
       {
         film: LE_MANS,
         rating: 1,
-        reviewer: 2,
+        reviewer: 'Campbell',
       },
       {
         film: LE_MANS,
         rating: -1,
-        reviewer: 3,
+        reviewer: 'Lauren',
       },
     ])
   })
@@ -173,13 +173,13 @@ describe('database.service.loadReviews', () => {
       rows: [{
         film: 13,
         rating: -1,
-        reviewer: 17,
+        name: 'Aliadiere',
       }],
     })
     expect(await databaseService.loadReviewsByIMDbID(LE_MANS)).to.deep.equal([{
       film: LE_MANS,
       rating: -1,
-      reviewer: 17,
+      reviewer: 'Aliadiere',
     }]
     )
   })
