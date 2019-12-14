@@ -5,7 +5,7 @@ import jwt from 'express-jwt'
  * URIs that will not require the user to be authenticated by token.
  */
 const PUBLIC_URIS = [
-  { url: /^\/api\/doc\/.*/, methods: ['GET'] },
+  { url: /^\/api\/doc/, methods: ['GET'] },
   { url: '/api/auth/token', methods: ['POST'] },
   { url: '/api/auth/user', methods: ['POST'] },
   { url: /^\/api\/films\/.*\/reviews/, methods: ['GET'] },
