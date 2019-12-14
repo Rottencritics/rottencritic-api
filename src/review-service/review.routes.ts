@@ -1,6 +1,7 @@
 import { AuthenticatedRequest } from 'authenticated-request'
 import express from 'express'
 import { logger } from '../logger'
+import { InternalError } from '../types'
 import { ReviewService } from './review.service'
 
 export class ReviewRouter {
@@ -136,6 +137,17 @@ export class ReviewRouter {
         .then((reviews) => res.status(200).json({
           reviews,
         }))
+        .catch((err) => {
+          if (err instanceof InternalError) {
+            logger.error(err)
+            res.status(500).json({
+              message: 'Internal error.'
+            })
+
+          } else {
+            throw err // this is not our problem
+          }
+        })
         .catch((reason) => {
           logger.debug(reason)
           res.status(400).json({
