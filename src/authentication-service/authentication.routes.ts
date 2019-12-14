@@ -72,7 +72,7 @@ export class AuthenticationRouter {
      * @swagger
      *  /auth/user:
      *    post:
-     *      tags: [user]
+     *      tags: [users]
      *      summary: Create a new user.
      *      description:
      *        User used to interact with this API where authentication is

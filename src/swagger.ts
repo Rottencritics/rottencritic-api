@@ -47,6 +47,10 @@ const swaggerSpec = jsdoc({
         description: 'Resources for authentication.',
         name: 'authentication',
       },
+      {
+        description: 'Operations on reviewers.',
+        name: 'users'
+      }
     ],
   },
 })
