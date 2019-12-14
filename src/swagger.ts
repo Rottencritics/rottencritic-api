@@ -12,8 +12,10 @@ export const router = Router()
  */
 const swaggerSpec = jsdoc({
   apis: ['src/**/*.ts'],
-  basePath: '/api',
   definition: {
+    servers: [
+      { url: 'http://localhost/api', description: 'Development server.' }
+    ],
     components: {
       securitySchemes: {
         basic: {

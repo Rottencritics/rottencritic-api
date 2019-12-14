@@ -67,5 +67,95 @@ export class AuthenticationRouter {
           })
         })
     })
+
+    /**
+     * @swagger
+     *  /auth/user:
+     *    post:
+     *      tags: [user]
+     *      summary: Create a new user.
+     *      description:
+     *        User used to interact with this API where authentication is
+     *        required.
+     *      security:
+     *        - basic: []
+     *      produces:
+     *        - application/json
+     *      requestBody:
+     *        required: true
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              required:
+     *                - username
+     *                - password
+     *              properties:
+     *                username:
+     *                  type: string
+     *                  example: 'arthurdent'
+     *                password:
+     *                  type: string
+     *                  example: 'dontpanic'
+     *      responses:
+     *        201:
+     *          description: Successfully created user.
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object
+     *                properties:
+     *                  username:
+     *                    type: string
+     *                    example: 'arthurdent'
+     *                  id:
+     *                    type: number
+     *                    example: 17
+     *        400:
+     *          description: Failed to create user.
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object
+     *                properties:
+     *                  message:
+     *                    type: string
+     *                    example:
+     *                      'A user with the name arthurdent already exists.'
+     *
+     */
+    this.router.post('/user', (req, res) => {
+      logger.debug('POST /auth/user')
+
+      if (req.body.username == null) {
+        res.status(400).json({
+          message: 'Request must include username.'
+        })
+        return
+      }
+
+      if (req.body.password == null) {
+        res.status(400).json({
+          message: 'Request must include password.'
+        })
+        return
+      }
+
+      this.authenticationService.createUser(
+        req.body.username,
+        req.body.password)
+        .then((user) => res.status(201)
+          .header('Location', `/api/auth/user/${user.id}`)
+          .json({
+            name: user.username,
+            id: user.id,
+          }))
+        .catch((reason) => {
+          logger.debug(reason)
+          res.status(400).json({
+            message: reason,
+          })
+        })
+    })
   }
 }
