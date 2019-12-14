@@ -118,6 +118,25 @@ export class DatabaseService {
     }
   }
 
+  public getReviewerById = async (id: number): Promise<User> => {
+    logger.debug('DatabaseService.getReviewerById()')
+
+    const { rows } = await this.pool.query(
+      'SELECT * FROM reviewers WHERE id=$1',
+      [id]
+    )
+
+    if (rows.length === 0) {
+      return Promise.reject(`No reviewer found with the id: '${id}'.`)
+    }
+
+    return {
+      id,
+      password: rows[0].password,
+      username: rows[0].name,
+    }
+  }
+
   public reviewerExists = async (name: string): Promise<boolean> => {
     const { rows } = await this.pool.query(
       'SELECT id FROM reviewers WHERE name=$1::text',
